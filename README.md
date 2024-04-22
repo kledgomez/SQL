@@ -2,7 +2,7 @@
 SQL Academy tasks.
 
 1. Вывод  уникальнх имён (first_name) студентов из таблицы Student:
-*select distinct first_name from Student;
+*select distinct first_name from Student;*
 ![image](https://github.com/kledgomez/SQL/assets/89851642/4f7519fd-b483-451b-93a5-7c81c95c10b3)
 
 2. Выведите идентификаторы товаров (поле good) из таблицы Payments, стоимость которых больше 2000 единиц. Стоимость товара хранится в поле unit_price.
