@@ -10,7 +10,7 @@ select good from Payments  where unit_price > 2000 ;
 ![image](https://github.com/kledgomez/SQL/assets/89851642/4b14e4ab-237a-4b3c-905d-475c4060728f)
 
 3. Выведите информацию о студентах из таблицы Student, у которых год рождения соответствует одному из перечисленных: 2000, 2002 и 2004.
-\SELECT * FROM Student
+\SELECT * FROM Student\
 \WHERE YEAR(birthday) IN ('2000', '2002', '2004');
 ![image](https://github.com/kledgomez/SQL/assets/89851642/81677c24-7d24-4226-9c70-20f89a791517)
 
