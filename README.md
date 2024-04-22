@@ -15,3 +15,148 @@ SELECT * FROM Student
 WHERE YEAR(birthday) IN ('2000', '2002', '2004');
 ![image](https://github.com/kledgomez/SQL/assets/89851642/81677c24-7d24-4226-9c70-20f89a791517)
 
+**Многотабличные запросы, JOIN. Внутреннее соединение INNER JOIN. Внешнее соединение OUTER JOIN.**
+
+4.1. Объедините таблицы Class и Student_in_class с помощью внутреннего соединения по полям Class.id и Student_in_class.class. Выведите название класса (поле Class.name) и идентификатор ученика (поле Student_in_class.student).
+select  Class.name,  Student_in_class.student
+from  Class
+inner join  Student_in_class on Class.id = Student_in_class.class;
+![image](https://github.com/kledgomez/SQL/assets/89851642/8301fb74-05d1-48aa-92af-e2223497436a)
+
+4.2. Дополните запрос из предыдущего задания, добавив ещё одно внутреннее соединение с таблицей Student.
+Объедините по полям Student_in_class.student и Student.id и вместо идентификатора ученика выведите его имя (поле first_name).
+select Class.name, first_name
+from  Class inner join  Student_in_class 
+on Class.id = Student_in_class.class
+join Student on Student_in_class.student = Student.id;
+![image](https://github.com/kledgomez/SQL/assets/89851642/8301fb74-05d1-48aa-92af-e2223497436a)
+
+5. Выведите названия продуктов, которые покупал член семьи со статусом "son". Для получения выборки вам нужно объединить таблицу Payments с таблицей FamilyMembers по полям family_member и member_id, а также с таблицей Goods по полям good и good_id.
+SELECT good_name FROM Payments join FamilyMembers on family_member = member_id join Goods on good = good_id
+where status = 'son';
+![image](https://github.com/kledgomez/SQL/assets/89851642/40939ade-07cc-47bc-a25f-216481b3722c)
+
+7. Выведите идентификатор (поле room_id) и среднюю оценку комнаты (поле rating, для вывода используйте псевдоним avg_score), составленную на основании отзывов из таблицы Reviews.
+Данная таблица связана с Reservations (таблица, где вы можете взять идентификатор комнаты) по полям reservation_id и Reservations.id.
+select room_id, AVG(rating) as avg_score
+from Reviews join Reservations 
+on reservation_id = Reservations.id
+Group by room_id;
+![image](https://github.com/kledgomez/SQL/assets/89851642/69b5b5c4-1c58-482a-a4f3-d89efba6021a)
+
+8. Выведите имя first_name и фамилию last_name каждого учителя из таблицы Teacher, а также количество занятий, в которых он был назначен преподавателем. Если преподаватель не был назначен ни на одно занятие, то выведите 0.
+select first_name, last_name, count(s.teacher) as amount_classes from Teacher t 
+left join Schedule s on t.id = s.teacher
+group by first_name, last_name;
+![image](https://github.com/kledgomez/SQL/assets/89851642/cf9804c6-1b75-4a24-8de5-a102175f0f75)
+
+**LIMIT.**
+9. Отсортируйте список компаний (таблица Company) по их названию в алфавитном порядке и выведите первые две записи.
+select * from company
+order by name
+limit 2;
+![image](https://github.com/kledgomez/SQL/assets/89851642/9ffca35f-2222-4f5e-acf7-e28026bbe062)
+
+10.Выведите начало (поле start_pair) и окончание (поле end_pair) второго и третьего занятия из таблицы Timepair.
+select start_pair, end_pair from Timepair limit 1, 2;
+![image](https://github.com/kledgomez/SQL/assets/89851642/a0424dc2-7610-49f0-96ac-f5a44fae3890)
+
+**Подзапросы. Многостолбцовые подзапросы.**
+
+11. Выведите всю информацию о пользователе из таблицы Users, кто является владельцем самого дорого жилья (таблица Rooms).
+select * from Users 
+where id = (
+select owner_id from Rooms
+where price = (select max(price) from Rooms));
+![image](https://github.com/kledgomez/SQL/assets/89851642/cc8da39c-7734-4cd8-81ff-eaf390433398)
+
+12. Выведите названия товаров из таблицы Goods (поле good_name), которые ещё ни разу не покупались ни одним из членов семьи (таблица Payments).
+13. SELECT good_name
+FROM (select * from Goods) RDYTFUGIHOJPK
+WHERE RDYTFUGIHOJPK.good_id NOT IN (SELECT good FROM Payments);
+![image](https://github.com/kledgomez/SQL/assets/89851642/44041fb5-400d-459a-b552-bc6165b4088a)
+
+14.  Строковые подзапросы. Выведите список комнат (все поля, таблица Rooms), которые по своим удобствам (has_tv, has_internet, has_kitchen, has_air_con) совпадают с комнатой с идентификатором "11".
+select r_1.id, r_1.home_type, r_1.address, r_1.has_tv, r_1.has_internet, r_1.has_kitchen, r_1.has_air_con, r_1.price, r_1.owner_id, r_1.latitude, r_1.longitude from Rooms r_1
+left join Rooms r_2 on r_2.id = 11
+where r_1.has_tv = r_2.has_tv
+and r_1.has_internet = r_2.has_internet
+and r_1.has_kitchen = r_2.has_kitchen
+and r_1.has_air_con = r_2.has_air_con;
+![image](https://github.com/kledgomez/SQL/assets/89851642/66b3c08d-964a-4d8e-b944-1994784afe31)
+
+15. Коррелированные подзапросы. С помощью коррелированного подзапроса выведите имена всех членов семьи (member_name) и цену их самого дорогого купленного товара.
+Для вывода цены самого дорогого купленного товара используйте псевдоним good_price. Если такого товара нет, выведите NULL.
+SELECT FamilyMembers.member_name, (
+    SELECT MAX(Payments.unit_price)
+    FROM Payments
+    WHERE Payments.family_member = FamilyMembers.member_id
+) AS good_price
+FROM FamilyMembers;
+![image](https://github.com/kledgomez/SQL/assets/89851642/c688c803-d302-41f7-a0a1-84b428489820)
+
+**UNION. CASE. IF, IFNULL и NULLIF**
+
+16. Выведите полные имена (поля first_name, middle_name и last_name) всех студентов и преподавателей.
+SELECT first_name, middle_name, last_name  FROM Student
+UNION
+SELECT DISTINCT first_name, middle_name, last_name  FROM Teacher
+![image](https://github.com/kledgomez/SQL/assets/89851642/6fde21e5-6caa-4e4b-88f1-b0ee5d5d68b7)
+
+17. Из таблицы Reviews выведите идентификаторы отзывов (поле id) и их категорию: для рейтинга 4-5 проставьте категорию «positive», для 3 проставьте «neutral», а для 1-2 - «negative».
+Для вывода категории рейтинга используйте псевдоним rating.
+SELECT id, rating,
+CASE
+  WHEN SUBSTRING(rating, 1, INSTR(rating, '')) IN (4, 5) THEN "positive"
+  WHEN SUBSTRING(rating, 1, INSTR(rating, '')) IN (1, 2) THEN "negative"
+   WHEN SUBSTRING(rating, 1, INSTR(rating, '')) IN (3) THEN "neutral"
+END AS rating
+FROM Reviews
+![image](https://github.com/kledgomez/SQL/assets/89851642/1d11a561-3c57-4581-bda0-2bd1bd5aae32)
+
+18. Из таблицы Rooms выведите идентификаторы сдаваемых жилых помещений (поле id) и наличие телевизора в помещении: если телевизор присутствует выведите «YES», иначе «NO».
+Для вывода наличия телевизора используйте псевдоним has_tv.
+select id, has_tv,
+if (has_tv = true, "YES", "NO") as has_tv
+from Rooms;
+![image](https://github.com/kledgomez/SQL/assets/89851642/1da0919a-4ea1-430d-b370-0b12fb739a3b)
+
+19. Из таблицы Teacher выведите имена (поле first_name), отчества (поле middle_name) и фамилии (поле last_name) учителей. Если отчество у учителя отсутствует, выведите в поле middle_name значение «Empty».
+select first_name,
+    IFNULL (middle_name, "Empty") as middle_name,
+last_name
+from Teacher;
+![image](https://github.com/kledgomez/SQL/assets/89851642/aa272849-97a7-4b2a-a6b8-8a5471f423bb)
+
+** INSERT. UPDATE. DELETE**
+
+20. Добавьте новый товар в таблицу Goods с именем «Table» и типом «equipment».
+В качестве первичного ключа (good_id) укажите количество записей в таблице + 1.
+insert into Goods (good_id, good_name, type)
+values ((select count(*) +1 from Goods as a),'Table', (select good_type_id from GoodTypes
+ where good_type_name ='equipment' ))
+![image](https://github.com/kledgomez/SQL/assets/89851642/5c33fb39-506c-4ac7-bfa0-059e1182edf0)
+
+21.Измените имя у "Wednesday Addams" на новое "Tuesday Addams".
+UPDATE FamilyMembers
+SET member_name = "Tuesday Addams"
+WHERE member_name = "Wednesday Addams";
+![image](https://github.com/kledgomez/SQL/assets/89851642/fb35443a-0644-4709-a8ce-821a4a1ad6c9)
+
+22.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
