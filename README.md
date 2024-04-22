@@ -10,8 +10,8 @@ select good from Payments  where unit_price > 2000 ;
 ![image](https://github.com/kledgomez/SQL/assets/89851642/4b14e4ab-237a-4b3c-905d-475c4060728f)
 
 3. Выведите информацию о студентах из таблицы Student, у которых год рождения соответствует одному из перечисленных: 2000, 2002 и 2004.
-\SELECT * FROM Student\
-\WHERE YEAR(birthday) IN ('2000', '2002', '2004');
+>SELECT * FROM Student
+>WHERE YEAR(birthday) IN ('2000', '2002', '2004');
 ![image](https://github.com/kledgomez/SQL/assets/89851642/81677c24-7d24-4226-9c70-20f89a791517)
 
 **Многотабличные запросы, JOIN. Внутреннее соединение INNER JOIN. Внешнее соединение OUTER JOIN.**
@@ -19,7 +19,7 @@ select good from Payments  where unit_price > 2000 ;
 4.1. Объедините таблицы Class и Student_in_class с помощью внутреннего соединения по полям Class.id и Student_in_class.class. Выведите название класса (поле Class.name) и идентификатор ученика (поле Student_in_class.student).
 select  Class.name,  Student_in_class.student
 from  Class
-inner join  Student_in_class on Class.id = Student_in_class.class;
+inner join  Student_in_class on Class.id = Student_in_class.class
 ![image](https://github.com/kledgomez/SQL/assets/89851642/8301fb74-05d1-48aa-92af-e2223497436a)
 
 4.2. Дополните запрос из предыдущего задания, добавив ещё одно внутреннее соединение с таблицей Student.
