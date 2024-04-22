@@ -1,6 +1,5 @@
 # SQL
-SQL tasks
-SQL Academy.
+SQL Academy tasks.
 
 1. Вывод  уникальнх имён (first_name) студентов из таблицы Student:
 select distinct first_name from Student;
@@ -143,19 +142,67 @@ SET member_name = "Tuesday Addams"
 WHERE member_name = "Wednesday Addams";
 ![image](https://github.com/kledgomez/SQL/assets/89851642/fb35443a-0644-4709-a8ce-821a4a1ad6c9)
 
-22.
+22.1. Удалить запись из таблицы Goods, у которой поле good_name равно "milk"
+delete Goods from Goods where good_name = "milk"
+22.2. Измените запрос так, чтобы удалить товары (Goods), имеющие тип деликатесов (delicacies).
+delete Goods FROM Goods JOIN GoodTypes ON
+Goods.type = GoodTypes.good_type_id 
+WHERE GoodTypes.good_type_name = "delicacies"
+![image](https://github.com/kledgomez/SQL/assets/89851642/ce719459-912b-433d-bbeb-d4e35f63b498)
 
+**ТИПЫ ДАННЫХ**
+23. Выведите список цен всего доступного жилья (из таблицы Rooms), округлённых к ближайшему кратному 10-ти числу. Например, если цена равна "9676", то после округления она будет равна "9680".
+Для вывода цены используйте псевдоним rounded_price.
+SELECT ROUND(price, -1) as rounded_price from Rooms;
+![image](https://github.com/kledgomez/SQL/assets/89851642/7dc9011f-101c-454f-93d5-635dc300d215)
 
+24. Пропишите формат строки во втором аргументе функции STR_TO_DATE, чтобы функция корректно отработала и вернула дату, на основании переданной первым аргументом строки.
+SELECT STR_TO_DATE('December 31, 2023', ' %M  %d, %Y') AS date;
+![image](https://github.com/kledgomez/SQL/assets/89851642/e19f8ced-aefa-433b-bc89-5ff83dae47b8)
 
+25. Выведите имена (поле member_name) и возраст для каждого человека из таблицы FamilyMembers.
+Для вывода возраста используйте псевдоним age.
+select member_name, TIMESTAMPDIFF(YEAR, birthday, NOW()) as age from FamilyMembers;
+![image](https://github.com/kledgomez/SQL/assets/89851642/4597b3d6-41b9-4057-94b2-918025cf7009)
 
+**Оконные функции. Партиции**
+26. Из таблицы Rooms вывести поля home_type и price, а также добавить колонку min_price_by_type, в которой необходимо вывести минимальную стоимость жилья для текущего типа жилья (home_type). Для вычисления минимальной стоимости нужно использовать оконную функцию MIN.
+SELECT home_type, price, 
+min(price) 
+OVER (
+    PARTITION BY home_type
+) as min_price_by_type
+from Rooms
+![image](https://github.com/kledgomez/SQL/assets/89851642/e8842b05-7dd0-46fd-b9f4-8d40382db321)
 
+27. Из таблицы Rooms вывести id, home_type и price у всех жилых помещений, а также в отдельной колонке room_rank вывести ранг данного жилого помещения в его категории (home_type) по цене, используя для этого функцию DENSE_RANK так, чтобы самое дешёвое жилое помещение имело ранг 1, следующие за ним по цене — 2 и так далее.
+select id, home_type, price,
+DENSE_RANK() over (partition by home_type 
+order by price) as 'room_rank' from Rooms;
+![image](https://github.com/kledgomez/SQL/assets/89851642/983ffd45-dfcf-4d06-ac3b-2e4f3df0d917)
 
+28. Дополните запрос так, чтобы найти разницу во времени между вылетами среди рейсов одной компании.
+В качестве результирующей выборки выведите идентификаторы компаний (в поле company), время вылета их рейсов (в поле time_out) и время (в поле time_diff), прошедшее с предыдущего вылета в формате ЧЧ-MM-СС. Если это был первый рейс компании, то в поле time_diff нужно вывести "00:00:00".
 
+SELECT 
+    company,
+    time_out,
+    CASE
+        WHEN ROW_NUMBER() OVER(PARTITION BY company order by time_out) = 1 THEN '00:00:00'
+        ELSE TIMEDIFF(
+            time_out,
+            lag(time_out) OVER(partition by company order by time_out)
+        )
+    END AS time_diff
+FROM Trip
+![image](https://github.com/kledgomez/SQL/assets/89851642/32c90d6d-2d61-4ba7-b41c-e40bcbba3e5f)
 
-
-
-
-
+**VIEW**
+29. На основании таблицы Student создайте представление ViewStudent, содержащие только поля id, first_name и last_name.
+create view ViewStudent as 
+select id, first_name, last_name
+from Student;
+![image](https://github.com/kledgomez/SQL/assets/89851642/72ab61f9-bb12-4bed-983e-be21d502a66f)
 
 
 
